@@ -30,6 +30,13 @@ post '/links' do
 	redirect to('/')
 end
 
+get '/tags/:text' do 
+	tag = Tag.first(:text => params[:text])
+	@links = tag ? tag.link : [] #if tag exists @links = tag.link, else @links = empty array
+	erb :index
+end
+
+
 
 
 
