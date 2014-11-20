@@ -9,8 +9,10 @@ set :views, Proc.new{File.join(root,'..', 'views')}
 env = ENV['RACK_ENV'] || 'development'
 DataMapper.setup(:default, "postgres://localhost/bookmarks2_#{env}")
 require './lib/link'
+require './lib/tag'
 DataMapper.finalize
 DataMapper.auto_upgrade!
+
 
  
 get '/' do 
@@ -21,7 +23,10 @@ end
 post '/links' do 
 	url = params["url"]
 	title = params["title"]
-	Link.create(:url => url, :title =>title)
+	tags = params["tags"].split(" ").map do |tag|
+		Tag.first_or_create(:text => tag) #why don't we have to also assign :link?
+	end
+	Link.create(:url => url, :title =>title, :tags => tags)
 	redirect to('/')
 end
 
@@ -31,5 +36,5 @@ end
 
 
 
-  # run! if app_file == $0
+#   run! if app_file == $0
 # end
