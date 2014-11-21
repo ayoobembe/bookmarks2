@@ -2,18 +2,10 @@ require 'sinatra/base'
 require 'data_mapper'
 require 'sinatra'
 require 'rack-flash'
-
+require './lib/data_mapper_setup'
 # class Bookmarks2 < Sinatra::Base
 
 set :views, Proc.new{File.join(root,'..', 'views')}
-
-env = ENV['RACK_ENV'] || 'development'
-DataMapper.setup(:default, "postgres://localhost/bookmarks2_#{env}")
-require './lib/link'
-require './lib/tag'
-require './lib/user'
-DataMapper.finalize
-DataMapper.auto_upgrade!
 use Rack::Flash
 
 enable :sessions
