@@ -7,6 +7,7 @@ require './lib/data_mapper_setup'
 
 set :views, Proc.new{File.join(root,'..', 'views')}
 use Rack::Flash
+use Rack::MethodOverride
 
 enable :sessions
 set :session_secret, 'super secret'
@@ -58,6 +59,34 @@ post '/users' do
 
 end
 
+get '/sessions/new' do 
+	erb :"sessions/new"
+end
+
+post '/sessions' do 
+	email, password = params[:email], params[:password]
+	user = User.authenticate(email,password)
+	# p user
+	if user 
+		session[:user_id] = user.id 
+		redirect to('/')
+	else
+		flash[:errors]=["The email or password is incorrect"]
+		erb :"sessions/new"
+	end
+end
+
+delete '/sessions' do 
+	session.delete(:user_id)
+	erb :"sessions/new"
+end
+
+
+# helpers do 
+# 	def current_user
+# 		@current_user ||= User.get(session[:user_id]) if session[:user_id]
+# 	end
+# end
 
 
 
